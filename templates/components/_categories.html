@@ -1,0 +1,33 @@
+<section id="categories" style="padding:56px 24px 0;background:var(--bg);">
+  <div style="max-width:1280px;margin:0 auto;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;">
+      <h2 style="font-size:1.5rem;font-weight:800;color:#fff;">
+        <i class="fas fa-layer-group" style="color:var(--primary);margin-right:10px;"></i>Kategoriyalar
+      </h2>
+    </div>
+    <div style="display:flex;gap:12px;overflow-x:auto;padding-bottom:16px;scrollbar-width:thin;">
+
+      <!-- Barchasi -->
+      <a href="{% url 'index' %}" style="text-decoration:none;flex-shrink:0;">
+        <button class="cat-btn {% if not active_category %}active{% endif %}"
+          style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:18px 20px;min-width:100px;border-radius:16px;background:var(--bg3);border:2px solid {% if not active_category %}var(--primary){% else %}var(--border){% endif %};cursor:pointer;transition:all 0.25s;{% if not active_category %}background:linear-gradient(135deg,rgba(108,99,255,0.2),rgba(167,139,250,0.1));{% endif %}">
+          <div style="width:48px;height:48px;border-radius:12px;background:{% if not active_category %}linear-gradient(135deg,var(--primary),var(--primary-light)){% else %}var(--bg2){% endif %};display:flex;align-items:center;justify-content:center;font-size:22px;">🛒</div>
+          <span style="font-size:12px;font-weight:700;color:{% if not active_category %}#fff{% else %}var(--muted){% endif %};white-space:nowrap;">Barchasi</span>
+        </button>
+      </a>
+
+      {% for category in categories %}
+      <a href="{% url 'by_category' category.slug %}" style="text-decoration:none;flex-shrink:0;">
+        <button class="cat-btn {% if active_category.slug == category.slug %}active{% endif %}"
+          style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:18px 20px;min-width:100px;border-radius:16px;background:var(--bg3);border:2px solid {% if active_category.slug == category.slug %}var(--primary){% else %}var(--border){% endif %};cursor:pointer;transition:all 0.25s;{% if active_category.slug == category.slug %}background:linear-gradient(135deg,rgba(108,99,255,0.2),rgba(167,139,250,0.1));{% endif %}">
+          <div style="width:48px;height:48px;border-radius:12px;background:{% if active_category.slug == category.slug %}linear-gradient(135deg,var(--primary),var(--primary-light)){% else %}var(--bg2){% endif %};display:flex;align-items:center;justify-content:center;font-size:22px;">
+            {% autoescape off %}{{ category.icon }}{% endautoescape %}
+          </div>
+          <span style="font-size:12px;font-weight:700;color:{% if active_category.slug == category.slug %}#fff{% else %}var(--muted){% endif %};white-space:nowrap;">{{ category.name }}</span>
+        </button>
+      </a>
+      {% endfor %}
+
+    </div>
+  </div>
+</section>

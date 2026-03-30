@@ -1,0 +1,35 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block content %}
+<div style="max-width:380px;margin:60px auto;">
+  <div style="background:#1e1e35;border:1px solid rgba(108,99,255,0.25);border-radius:16px;padding:36px;box-shadow:0 20px 60px rgba(0,0,0,0.4);">
+    <div style="text-align:center;margin-bottom:28px;">
+      <div style="width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,#6c63ff,#a78bfa);display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 14px;">⚙️</div>
+      <h2 style="color:#fff;font-size:1.4rem;font-weight:800;font-family:Inter,sans-serif;margin:0;">Admin Panel</h2>
+    </div>
+    <form method="post" id="login-form" action="{{ app_path }}">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}">
+      <div style="margin-bottom:16px;">
+        <input type="text" name="username" autofocus required placeholder="Foydalanuvchi nomi"
+          style="width:100%;padding:11px 15px;background:#16162a;border:1px solid rgba(255,255,255,0.08);border-radius:10px;color:#e2e8f0;font-size:14px;font-family:Inter,sans-serif;">
+      </div>
+      <div style="margin-bottom:22px;">
+        <input type="password" name="password" required placeholder="Parol"
+          style="width:100%;padding:11px 15px;background:#16162a;border:1px solid rgba(255,255,255,0.08);border-radius:10px;color:#e2e8f0;font-size:14px;font-family:Inter,sans-serif;">
+      </div>
+      <button type="submit"
+        style="width:100%;padding:13px;background:linear-gradient(135deg,#6c63ff,#a78bfa);border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;">
+        Kirish
+      </button>
+    </form>
+  </div>
+</div>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  body { background: #0f0f1a !important; }
+  #header { background: linear-gradient(135deg,#6c63ff,#a78bfa) !important; }
+  input:focus { outline: none; border-color: #6c63ff !important; box-shadow: 0 0 0 3px rgba(108,99,255,0.2); }
+</style>
+{% endblock %}

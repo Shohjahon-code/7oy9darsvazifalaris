@@ -1,0 +1,92 @@
+<section id="products" style="padding:48px 24px 80px;background:var(--bg);">
+  <div style="max-width:1280px;margin:0 auto;">
+
+    <!-- Section header -->
+    <div style="margin-bottom:36px;">
+      <p style="font-size:13px;font-weight:700;color:var(--primary);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">
+        {% if active_category %}{{ active_category.name }}{% else %}Barcha mahsulotlar{% endif %}
+      </p>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <h2 style="font-size:1.9rem;font-weight:900;color:#fff;letter-spacing:-0.5px;">
+          {% if active_category %}{{ active_category.name }} <span class="gradient-text">mahsulotlari</span>
+          {% else %}Barcha <span class="gradient-text">mahsulotlar</span>{% endif %}
+        </h2>
+        <span style="font-size:13px;color:var(--muted);background:var(--bg3);padding:6px 14px;border-radius:8px;border:1px solid var(--border);">
+          {{ products|length }} ta mahsulot
+        </span>
+      </div>
+    </div>
+
+    {% if products %}
+    <!-- Products grid -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:24px;">
+      {% for product in products %}
+      <div class="product-card glass" onclick="window.location='{% url 'product_detail' product.slug %}'"
+        style="border-radius:18px;overflow:hidden;cursor:pointer;position:relative;">
+
+        <!-- Discount badge -->
+        {% if product.get_discount_percent %}
+        <div style="position:absolute;top:14px;left:14px;z-index:2;background:linear-gradient(135deg,#ef4444,#f97316);color:#fff;font-size:11px;font-weight:800;padding:4px 10px;border-radius:20px;">
+          −{{ product.get_discount_percent }}%
+        </div>
+        {% endif %}
+
+        <!-- Image -->
+        <div class="img-wrap" style="height:220px;background:var(--bg3);">
+          <img src="{{ product.get_main_image }}" alt="{{ product.name }}"
+            style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+
+        <!-- Info -->
+        <div style="padding:18px;">
+          {% if product.category %}
+          <span style="font-size:11px;font-weight:700;color:var(--primary-light);letter-spacing:1px;text-transform:uppercase;">
+            {{ product.category.name }}
+          </span>
+          {% endif %}
+          <h3 style="font-size:16px;font-weight:700;color:#fff;margin:6px 0 8px;line-height:1.4;">{{ product.name }}</h3>
+          <p style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px;
+            display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+            {{ product.description }}
+          </p>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div>
+              <span style="font-size:1.25rem;font-weight:800;color:#fff;">{{ product.price|floatformat:0 }}</span>
+              <span style="font-size:12px;color:var(--muted);margin-left:4px;">so'm</span>
+              {% if product.old_price %}
+              <div style="font-size:12px;color:var(--muted);text-decoration:line-through;">{{ product.old_price|floatformat:0 }} so'm</div>
+              {% endif %}
+            </div>
+            <button onclick="event.stopPropagation();addToCart('{{ product.pk }}','{{ product.name }}',{{ product.price }},'{{ product.get_main_image }}')"
+              style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--primary-light));border:none;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 15px rgba(108,99,255,0.4);transition:transform 0.2s;"
+              onmouseenter="this.style.transform='scale(1.1)'" onmouseleave="this.style.transform='scale(1)'">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+
+          <!-- Stock -->
+          {% if product.stock < 10 and product.stock > 0 %}
+          <div style="margin-top:10px;font-size:11px;color:#f97316;font-weight:600;">
+            <i class="fas fa-fire"></i> Faqat {{ product.stock }} ta qoldi!
+          </div>
+          {% endif %}
+        </div>
+
+      </div>
+      {% endfor %}
+    </div>
+
+    {% else %}
+    <!-- Empty state -->
+    <div style="text-align:center;padding:80px 24px;">
+      <div style="font-size:64px;margin-bottom:20px;opacity:0.3;">📦</div>
+      <h3 style="font-size:1.3rem;font-weight:700;color:var(--muted);margin-bottom:12px;">Mahsulotlar topilmadi</h3>
+      <p style="color:var(--muted);font-size:14px;margin-bottom:24px;">Bu kategoriyada hozircha mahsulot yo'q</p>
+      <a href="{% url 'index' %}" style="padding:12px 28px;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;font-weight:700;border-radius:10px;text-decoration:none;">
+        Barcha mahsulotlar
+      </a>
+    </div>
+    {% endif %}
+
+  </div>
+</section>

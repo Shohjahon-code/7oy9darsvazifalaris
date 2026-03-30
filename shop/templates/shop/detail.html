@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+{% block title %}{{ product.name }} — ShopStyle{% endblock %}
+
+{% block hero %}{% endblock %}
+
+{% block main %}
+<div style="padding-top:88px;min-height:100vh;background:var(--bg);">
+  <div style="max-width:1280px;margin:0 auto;padding:40px 24px 80px;">
+
+    <!-- Breadcrumb -->
+    <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-bottom:32px;flex-wrap:wrap;">
+      <a href="{% url 'index' %}" style="color:var(--muted);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--muted)'">
+        <i class="fas fa-home"></i> Bosh sahifa
+      </a>
+      <i class="fas fa-chevron-right" style="font-size:10px;opacity:0.4;"></i>
+      {% if product.category %}
+      <a href="{% url 'by_category' product.category.slug %}" style="color:var(--muted);text-decoration:none;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--muted)'">
+        {{ product.category.name }}
+      </a>
+      <i class="fas fa-chevron-right" style="font-size:10px;opacity:0.4;"></i>
+      {% endif %}
+      <span style="color:#fff;font-weight:600;">{{ product.name }}</span>
+    </div>
+
+    <!-- Main block -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start;">
+
+      <!-- ── LEFT: Images ── -->
+      <div>
+        <!-- Main image -->
+        <div style="border-radius:20px;overflow:hidden;background:var(--bg3);border:1px solid var(--border);margin-bottom:14px;aspect-ratio:1;position:relative;">
+          <img id="main-img" src="{{ product.get_main_image }}" alt="{{ product.name }}"
+            style="width:100%;height:100%;object-fit:cover;transition:opacity 0.2s;">
+
+          {% if product.get_discount_percent %}
+          <div style="position:absolute;top:16px;left:16px;background:linear-gradient(135deg,#ef4444,#f97316);color:#fff;font-size:13px;font-weight:800;padding:6px 14px;border-radius:20px;">
+            −{{ product.get_discount_percent }}%
+          </div>
+          {% endif %}
+
+          {% if not product.is_available or product.stock == 0 %}
+          <div style="position:absolute;inset:0;background:rgba(0,0,0,0.55);display:flex;align-items:center;justify-content:center;">
+            <span style="background:#1e1e35;color:var(--muted);padding:10px 24px;border-radius:10px;font-weight:700;font-size:15px;">Tugadi</span>
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Thumbnails -->
+        {% if product.images.count > 1 %}
+        <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;">
+          {% for img in product.images.all %}
+          <div class="thumb-item {% if forloop.first %}selected{% endif %}"
+            onclick="switchMainImage('{{ img.image.url }}', this)"
+            style="flex-shrink:0;width:76px;height:76px;border-radius:12px;overflow:hidden;cursor:pointer;border:2px solid {% if forloop.first %}var(--primary){% else %}var(--border){% endif %};transition:border-color 0.2s;">
+            <img src="{{ img.image.url }}" alt="thumb" style="width:100%;height:100%;object-fit:cover;">
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- ── RIGHT: Info ── -->
+      <div style="position:sticky;top:100px;">
+
+        <!-- Category tag -->
+        {% if product.category %}
+        <a href="{% url 'by_category' product.category.slug %}" style="text-decoration:none;">
+          <span style="display:inline-flex;align-items:center;gap:6px;background:rgba(108,99,255,0.12);border:1px solid rgba(108,99,255,0.25);color:var(--primary-light);font-size:12px;font-weight:700;padding:5px 14px;border-radius:20px;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:16px;">
+            {% autoescape off %}{{ product.category.icon }}{% endautoescape %}
+            {{ product.category.name }}
+          </span>
+        </a>
+        {% endif %}
+
+        <h1 style="font-size:clamp(1.6rem,3vw,2.4rem);font-weight:900;color:#fff;line-height:1.2;letter-spacing:-0.5px;margin-bottom:16px;">
+          {{ product.name }}
+        </h1>
+
+        <!-- Price -->
+        <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:20px;">
+          <span style="font-size:2rem;font-weight:900;background:linear-gradient(135deg,var(--primary),var(--primary-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
+            {{ product.price|floatformat:0 }} so'm
+          </span>
+          {% if product.old_price %}
+          <span style="font-size:1rem;color:var(--muted);text-decoration:line-through;">{{ product.old_price|floatformat:0 }} so'm</span>
+          {% endif %}
+        </div>
+
+        <!-- Stock info -->
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:24px;">
+          {% if product.stock > 10 %}
+          <span style="width:8px;height:8px;border-radius:50%;background:#22c55e;display:inline-block;"></span>
+          <span style="font-size:13px;color:#22c55e;font-weight:600;">Mavjud ({{ product.stock }} ta)</span>
+          {% elif product.stock > 0 %}
+          <span style="width:8px;height:8px;border-radius:50%;background:#f97316;display:inline-block;"></span>
+          <span style="font-size:13px;color:#f97316;font-weight:600;">Faqat {{ product.stock }} ta qoldi!</span>
+          {% else %}
+          <span style="width:8px;height:8px;border-radius:50%;background:#ef4444;display:inline-block;"></span>
+          <span style="font-size:13px;color:#ef4444;font-weight:600;">Tugagan</span>
+          {% endif %}
+        </div>
+
+        <!-- Description -->
+        {% if product.description %}
+        <p style="font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:28px;border-left:3px solid var(--primary);padding-left:14px;">
+          {{ product.description }}
+        </p>
+        {% endif %}
+
+        <!-- Divider -->
+        <div style="height:1px;background:var(--border);margin-bottom:28px;"></div>
+
+        <!-- Qty + Add to cart -->
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;flex-wrap:wrap;">
+          <!-- Qty -->
+          <div style="display:flex;align-items:center;gap:0;background:var(--bg3);border:1px solid var(--border);border-radius:12px;overflow:hidden;">
+            <button class="qty-btn" onclick="changeQty(-1)" style="border-radius:0;border:none;width:44px;height:44px;">
+              <i class="fas fa-minus" style="font-size:12px;"></i>
+            </button>
+            <span id="qty-val" style="font-size:16px;font-weight:700;color:#fff;width:44px;text-align:center;line-height:44px;">1</span>
+            <button class="qty-btn" onclick="changeQty(1)" style="border-radius:0;border:none;width:44px;height:44px;">
+              <i class="fas fa-plus" style="font-size:12px;"></i>
+            </button>
+          </div>
+
+          <!-- Add to cart -->
+          <button onclick="addToCart('{{ product.pk }}','{{ product.name }}',{{ product.price }},'{{ product.get_main_image }}')"
+            {% if product.stock == 0 %}disabled{% endif %}
+            style="flex:1;min-width:160px;padding:13px 24px;background:{% if product.stock == 0 %}var(--bg3){% else %}linear-gradient(135deg,var(--primary),var(--primary-light)){% endif %};border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:700;cursor:{% if product.stock == 0 %}not-allowed{% else %}pointer{% endif %};display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:{% if product.stock > 0 %}0 6px 24px rgba(108,99,255,0.35){% else %}none{% endif %};transition:transform 0.2s;"
+            onmouseenter="if({{ product.stock }}>0) this.style.transform='translateY(-2px)'"
+            onmouseleave="this.style.transform='translateY(0)'">
+            <i class="fas fa-shopping-bag"></i>
+            {% if product.stock == 0 %}Tugagan{% else %}Savatga qo'shish{% endif %}
+          </button>
+        </div>
+
+        <!-- Features -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:28px;">
+          <div style="display:flex;align-items:center;gap:10px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:12px 14px;">
+            <i class="fas fa-truck" style="color:var(--primary);font-size:16px;width:20px;text-align:center;"></i>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:#fff;">Tez yetkazish</div>
+              <div style="font-size:11px;color:var(--muted);">1–3 ish kuni</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:12px 14px;">
+            <i class="fas fa-shield-alt" style="color:#22c55e;font-size:16px;width:20px;text-align:center;"></i>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:#fff;">Kafolat</div>
+              <div style="font-size:11px;color:var(--muted);">30 kun qaytarish</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:12px 14px;">
+            <i class="fas fa-credit-card" style="color:#f59e0b;font-size:16px;width:20px;text-align:center;"></i>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:#fff;">Qulay to'lov</div>
+              <div style="font-size:11px;color:var(--muted);">Naqd / Karta</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:12px 14px;">
+            <i class="fas fa-headset" style="color:#a78bfa;font-size:16px;width:20px;text-align:center;"></i>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:#fff;">24/7 Yordam</div>
+              <div style="font-size:11px;color:var(--muted);">Doim aloqada</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── Related products ── -->
+    {% if related %}
+    <div style="margin-top:72px;padding-top:48px;border-top:1px solid var(--border);">
+      <div style="margin-bottom:28px;">
+        <p style="font-size:12px;font-weight:700;color:var(--primary);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;">Ko'proq ko'rish</p>
+        <h2 style="font-size:1.6rem;font-weight:900;color:#fff;letter-spacing:-0.5px;">O'xshash <span class="gradient-text">mahsulotlar</span></h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px;">
+        {% for p in related %}
+        <div class="product-card glass" onclick="window.location='{% url 'product_detail' p.slug %}'"
+          style="border-radius:16px;overflow:hidden;cursor:pointer;">
+          <div class="img-wrap" style="height:180px;background:var(--bg3);">
+            <img src="{{ p.get_main_image }}" alt="{{ p.name }}" style="width:100%;height:100%;object-fit:cover;display:block;">
+          </div>
+          <div style="padding:14px;">
+            <h4 style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px;line-height:1.4;">{{ p.name }}</h4>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-size:1rem;font-weight:800;color:#fff;">{{ p.price|floatformat:0 }} <span style="font-size:11px;color:var(--muted);font-weight:400;">so'm</span></span>
+              <button onclick="event.stopPropagation();addToCart('{{ p.pk }}','{{ p.name }}',{{ p.price }},'{{ p.get_main_image }}')"
+                style="width:34px;height:34px;background:linear-gradient(135deg,var(--primary),var(--primary-light));border:none;border-radius:8px;color:#fff;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+
+<!-- Responsive fix for small screens -->
+<style>
+  @media (max-width: 768px) {
+    .detail-grid { grid-template-columns: 1fr !important; }
+  }
+</style>
+{% endblock %}
+
+{% block footer %}
+{% include 'layout/footer.html' %}
+{% endblock %}

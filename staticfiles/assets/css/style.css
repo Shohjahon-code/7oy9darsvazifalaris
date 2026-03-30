@@ -1,0 +1,83 @@
+/* ===== ShopStyle – Custom CSS ===== */
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #0f0f1a; }
+::-webkit-scrollbar-thumb { background: #6c63ff; border-radius: 10px; }
+
+/* Smooth scroll */
+html { scroll-behavior: smooth; }
+
+/* Card hover lift */
+.product-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px rgba(108, 99, 255, 0.25);
+}
+
+/* Image zoom on hover */
+.img-wrap { overflow: hidden; }
+.img-wrap img { transition: transform 0.5s ease; }
+.img-wrap:hover img { transform: scale(1.08); }
+
+/* Category active state */
+.cat-btn.active {
+    background: linear-gradient(135deg, #6c63ff, #a78bfa);
+    color: #fff;
+    border-color: transparent;
+}
+
+/* Badge pulse */
+@keyframes pulse-badge {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+.badge-pulse { animation: pulse-badge 2s infinite; }
+
+/* Gradient text */
+.gradient-text {
+    background: linear-gradient(135deg, #6c63ff, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Hero background pattern */
+.hero-bg {
+    background-color: #0f0f1a;
+    background-image:
+        radial-gradient(ellipse at 20% 50%, rgba(108, 99, 255, 0.15) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(167, 139, 250, 0.1) 0%, transparent 50%);
+}
+
+/* Glass card */
+.glass {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+}
+
+/* Qty button */
+.qty-btn {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: white;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.qty-btn:hover { background: #6c63ff; border-color: #6c63ff; }
+
+/* Thumbnail active */
+.thumb-item.selected { border-color: #6c63ff !important; }
+
+/* Input focus */
+input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: #6c63ff !important;
+    box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+}
