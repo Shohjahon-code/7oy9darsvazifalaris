@@ -22,7 +22,6 @@ def add_to_cart(request, product_slug, action):
 
     product = get_object_or_404(Product, slug=product_slug)
 
-    # Foydalanuvchining aktiv (default) orderini olamiz yoki yaratamiz
     order, _ = Order.objects.get_or_create(user=request.user, is_default=True)
 
     order_product, created = OrderProduct.objects.get_or_create(
